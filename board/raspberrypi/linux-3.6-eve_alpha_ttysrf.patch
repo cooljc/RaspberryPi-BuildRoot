@@ -1,5 +1,5 @@
 diff --git a/arch/arm/mach-bcm2708/bcm2708.c b/arch/arm/mach-bcm2708/bcm2708.c
-index 7fe7283..e91523f 100644
+index 7fe7283..b7b5440 100644
 --- a/arch/arm/mach-bcm2708/bcm2708.c
 +++ b/arch/arm/mach-bcm2708/bcm2708.c
 @@ -589,11 +589,19 @@ static struct platform_device bcm2708_spi_device = {
@@ -22,15 +22,18 @@ index 7fe7283..e91523f 100644
  	}, {
  		.modalias = "spidev",
  		.max_speed_hz = 500000,
-@@ -643,6 +651,15 @@ static struct platform_device bcm2708_bsc1_device = {
+@@ -643,6 +651,18 @@ static struct platform_device bcm2708_bsc1_device = {
  	.resource = bcm2708_bsc1_resources,
  };
  
 +#ifdef CONFIG_STAGING_EVE_ALPHA
 +static struct i2c_board_info __initdata eve_alpha_i2c_devices[] = {
 +	{
-+		I2C_BOARD_INFO("rtc-ds1307", 0x68),
-+		.type= "ds1307",
++		I2C_BOARD_INFO("rtc-bq32k", 0x68),
++		.type= "bq32000",
++	}, {
++		I2C_BOARD_INFO("lm75", 0x48),
++		.type= "tmp100",
 +	},
 +};
 +#endif
@@ -38,18 +41,18 @@ index 7fe7283..e91523f 100644
  static struct platform_device bcm2835_hwmon_device = {
  	.name = "bcm2835_hwmon",
  };
-@@ -752,6 +769,15 @@ void __init bcm2708_init(void)
+@@ -752,6 +772,15 @@ void __init bcm2708_init(void)
  	spi_register_board_info(bcm2708_spi_devices,
  			ARRAY_SIZE(bcm2708_spi_devices));
  #endif
 +#ifdef CONFIG_STAGING_EVE_ALPHA
 +	/* Handle Rev1/2 boards */
 +	if (boardrev == 0x0f)
-+	  i2c_register_board_info(1, eve_alpha_i2c_devices, 
-+				  ARRAY_SIZE(bcm2708_spi_devices));
++		i2c_register_board_info(1, eve_alpha_i2c_devices, 
++						ARRAY_SIZE(eve_alpha_i2c_devices));
 +	else
-+	  i2c_register_board_info(0, eve_alpha_i2c_devices, 
-+				  ARRAY_SIZE(bcm2708_spi_devices));
++		i2c_register_board_info(0, eve_alpha_i2c_devices, 
++						ARRAY_SIZE(eve_alpha_i2c_devices));
 +#endif
  }
  
